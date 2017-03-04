@@ -77,7 +77,7 @@ Setting chart parameters
 | `max_color`                | The maximum of the color range                                            | string   | `'green'`                 |
 | `min_color`                | The minimum of the color range                                            | string   | `'white'`                 |
 | `stroke_color`             | The Spot Stroke Color                                                     | string   | `'black'`                 |
-| `spot_matrix_type`         | The type of Spot Matrix (ring/size/color/fill)                            | string   | `'fill'`                  |
+| `spot_matrix_type`         | The type of Spot Matrix (ring/size/color/fill/sector)                     | string   | `'fill'`                  |
 
 # Author
 
