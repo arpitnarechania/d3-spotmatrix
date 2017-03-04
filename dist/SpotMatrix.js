@@ -77,6 +77,14 @@ function SpotMatrix(dataset,chart_options) {
         }(dataset, column_topics)
     )
 
+    function toRadians(degs){
+        return Math.PI*degs/180;
+    }
+
+    function toDegrees(radians){
+        return 180*radians/Math.PI;
+    }
+
     var minValue = extentOfData[0];
     var maxValue = extentOfData[1];
 
@@ -88,6 +96,9 @@ function SpotMatrix(dataset,chart_options) {
 
     var inverseRadiusScale = d3.scale.linear().domain([minValue, maxValue])
         .range([spotRadius,0]);
+
+    var radialScale = d3.scale.linear().domain([minValue, maxValue])
+        .range([0,toRadians(359)]);
 
     var gradientScaleSVG = div.append("svg").attr("width",0).attr("height",0);
 
@@ -180,6 +191,29 @@ function SpotMatrix(dataset,chart_options) {
                 .style({fill:minColor});
 
         }
+        if(spotMatrixType=='sector'){
+
+            var arc = d3.svg.arc()
+                    .innerRadius(0)
+                    .outerRadius(spotRadius)
+                    .startAngle(0)
+                    .endAngle(radialScale(d));
+
+            var elem = svg.selectAll("div")
+            .data([d]);
+
+            var elemEnter = elem.enter()
+                .append("g");
+
+            elemEnter.append("path")
+                .attr("class", "arc spots")
+                .attr("transform","translate(" + spotRadius+ "," + spotRadius+ ")")
+                .attr("d", arc)
+                .style("fill",maxColor)
+                .style("stroke",maxColor)
+                .style("stroke-width",1)
+        }
+
         add_tooltips(svg);
 
         function add_tooltips(){
@@ -248,6 +282,8 @@ function SpotMatrix(dataset,chart_options) {
 
         }else if(spotMatrixType == 'ring'){
             return {fill:maxColor};
+        }else if(spotMatrixType == 'sector'){
+            return {fill:"white"};
         }
     }
 
