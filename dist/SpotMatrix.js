@@ -49,7 +49,6 @@ function SpotMatrix(dataset,chart_options) {
        throw new Error("Valid spotMatrixTypes are 'fill,'color','size','ring'");
     }
 
-
     if(!isNaN(minColor)){
         throw new Error("minColor must be a String");
     }
@@ -214,7 +213,7 @@ function SpotMatrix(dataset,chart_options) {
                 .style("stroke-width",1)
         }
 
-        add_tooltips(svg);
+        add_tooltips();
 
         function add_tooltips(){
 
