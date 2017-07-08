@@ -24,7 +24,7 @@
 ******************************************************************************************/
 
 
-function SpotMatrix(dataset,chart_options) {
+function SpotMatrix(element, dataset, chart_options) {
     var spotRadius = chart_options.spot_radius;
     var minColor = chart_options.min_color;
     var maxColor = chart_options.max_color;
@@ -33,35 +33,35 @@ function SpotMatrix(dataset,chart_options) {
     var spotMatrixType = chart_options.spot_matrix_type;
     var strokeColor = chart_options.stroke_color;
 
-    if(isNaN(spotRadius) || spotRadius < 0){
+    if (isNaN(spotRadius) || spotRadius < 0) {
         throw new Error("Spot Radius must be a Positive Number");
     }
 
-    if(isNaN(spotCellPadding) || spotCellPadding < 0){
+    if (isNaN(spotCellPadding) || spotCellPadding < 0) {
         throw new Error("Spot Cell Padding must be a Positive Number");
     }
 
-    if(isNaN(spotCellMargin) || spotCellMargin < 0){
+    if (isNaN(spotCellMargin) || spotCellMargin < 0) {
         throw new Error("Spot Cell Margin must be a Positive Number");
     }
 
-    if(!(spotMatrixType.localeCompare("fill") || spotMatrixType.localeCompare("color") || spotMatrixType.localeCompare("size") || spotMatrixType.localeCompare("ring"))){
-       throw new Error("Valid spotMatrixTypes are 'fill,'color','size','ring'");
+    if (!(spotMatrixType.localeCompare("fill") || spotMatrixType.localeCompare("color") || spotMatrixType.localeCompare("size") || spotMatrixType.localeCompare("ring"))) {
+        throw new Error("Valid spotMatrixTypes are 'fill,'color','size','ring'");
     }
 
-    if(!isNaN(minColor)){
+    if (!isNaN(minColor)) {
         throw new Error("minColor must be a String");
     }
 
-    if(!isNaN(maxColor)){
+    if (!isNaN(maxColor)) {
         throw new Error("maxColor must be a String");
     }
 
-    if(!isNaN(strokeColor)){
+    if (!isNaN(strokeColor)) {
         throw new Error("strokeColor must be a String");
     }
 
-    var div = d3.select('#SpotMatrix');
+    var div = d3.select(element);
     var column_topics = d3.keys(dataset[0]);
     var extentOfData = d3.extent(
         function(array, names) {
@@ -76,34 +76,34 @@ function SpotMatrix(dataset,chart_options) {
         }(dataset, column_topics)
     )
 
-    function toRadians(degs){
-        return Math.PI*degs/180;
+    function toRadians(degs) {
+        return Math.PI * degs / 180;
     }
 
-    function toDegrees(radians){
-        return 180*radians/Math.PI;
+    function toDegrees(radians) {
+        return 180 * radians / Math.PI;
     }
 
     var minValue = extentOfData[0];
     var maxValue = extentOfData[1];
 
-    var colorScale = d3.scale.linear().domain([minValue, maxValue])
-        .range([minColor,maxColor]);
+    var colorScale = d3.scaleLinear().domain([minValue, maxValue])
+        .range([minColor, maxColor]);
 
-    var radiusScale = d3.scale.linear().domain([minValue, maxValue])
-        .range([0,spotRadius]);
+    var radiusScale = d3.scaleLinear().domain([minValue, maxValue])
+        .range([0, spotRadius]);
 
-    var inverseRadiusScale = d3.scale.linear().domain([minValue, maxValue])
-        .range([spotRadius,0]);
+    var inverseRadiusScale = d3.scaleLinear().domain([minValue, maxValue])
+        .range([spotRadius, 0]);
 
-    var radialScale = d3.scale.linear().domain([minValue, maxValue])
-        .range([0,toRadians(359)]);
+    var radialScale = d3.scaleLinear().domain([minValue, maxValue])
+        .range([0, toRadians(359)]);
 
-    var gradientScaleSVG = div.append("svg").attr("width",0).attr("height",0);
+    var gradientScaleSVG = div.append("svg").attr("width", 0).attr("height", 0);
 
     // append a table to the div
     var table = div.append("table")
-        .attr("class","table")
+        .attr("class", "table_spot-matrix")
         .classed("display", true);
 
     // append a header to the table
@@ -120,11 +120,12 @@ function SpotMatrix(dataset,chart_options) {
     // update (enter) the selection with nodes that have data
     // append the cell elements to the header row
     // return the text string for each item in the data array
+
     theadRow.selectAll("td")
         .data(d3.keys(dataset[0]))
         .enter()
         .append("td")
-        .style({"padding":spotCellPadding+"px","margin":spotCellMargin+"px"})
+        .attr('style', "padding:" + spotCellPadding + "px;" + "margin:" + spotCellMargin + "px")
         .html(function(d) {
             return evalText(d);
         });
@@ -143,28 +144,28 @@ function SpotMatrix(dataset,chart_options) {
         })
         .enter()
         .append("td")
-        .style({"padding":spotCellPadding+"px","margin":spotCellMargin+"px"})
+        .attr('style', "padding:" + spotCellPadding + "px;" + "margin:" + spotCellMargin + "px;")
         .html(function(d) {
             return evalText(d);
         })
         .filter(function(d) {
             return !isNaN(d);
         })
-        .append(function(d,i,j) {
-            return renderSpots(d,i,j);
+        .append(function(d, i, j) {
+            return renderSpots(d, i, j);
         });
 
-    function renderSpots(d,i,j) {
+    function renderSpots(d, i, j) {
 
         var w = spotRadius * 2;
         var h = spotRadius * 2;
 
         var spots = document.createElement("div");
-        var svg = d3.select(spots).append("svg")
-            .attr({width: w,height: h})
-            .style({
-            margin: spotCellMargin,
-            padding: spotCellPadding});
+        var svg = d3.select(spots).append("svg");
+
+        svg.attr("width", w);
+        svg.attr("height", h);
+        svg.attr("style", "padding:" + spotCellPadding + "px;" + "margin:" + spotCellMargin + "px;");
 
         var elem = svg.selectAll("div")
             .data([d]);
@@ -172,76 +173,78 @@ function SpotMatrix(dataset,chart_options) {
         var elemEnter = elem.enter()
             .append("g");
 
-        elemEnter.append("circle")
-            .attr("class","spots")
-            .attr(spotAttr(d,i,j))
-            .style(spotStyle(d,i,j));
+        var elemEnterCircle = elemEnter.append("circle");
+        elemEnterCircle.attr("class", "spots")
+        spotAttr(elemEnterCircle, d, i, j);
+        elemEnterCircle.attr("fill", spotStyle(d, i, j));
 
-        if(spotMatrixType=='ring'){
+        if (spotMatrixType == 'ring') {
             var elem = svg.selectAll("div")
-            .data([d]);
+                .data([d]);
 
             var elemEnter = elem.enter()
                 .append("g");
 
-            elemEnter.append("circle")
-                .attr("class","spots")
-                .attr({cx: spotRadius,cy: spotRadius,r: inverseRadiusScale(d)})
-                .style({fill:minColor});
+            var elemEnterCircle = elemEnter.append("circle")
+            elemEnterCircle.attr("class", "spots")
+            elemEnterCircle.attr("cx", spotRadius);
+            elemEnterCircle.attr("cy", spotRadius);
+            elemEnterCircle.attr("r", inverseRadiusScale(d));
+            elemEnterCircle.attr("fill", minColor);
 
         }
-        if(spotMatrixType=='sector'){
+        if (spotMatrixType == 'sector') {
 
-            var arc = d3.svg.arc()
-                    .innerRadius(0)
-                    .outerRadius(spotRadius)
-                    .startAngle(0)
-                    .endAngle(radialScale(d));
+            var arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(spotRadius)
+                .startAngle(0)
+                .endAngle(radialScale(d));
 
             var elem = svg.selectAll("div")
-            .data([d]);
+                .data([d]);
 
             var elemEnter = elem.enter()
                 .append("g");
 
             elemEnter.append("path")
                 .attr("class", "arc spots")
-                .attr("transform","translate(" + spotRadius+ "," + spotRadius+ ")")
+                .attr("transform", "translate(" + spotRadius + "," + spotRadius + ")")
                 .attr("d", arc)
-                .style("fill",maxColor)
-                .style("stroke",maxColor)
-                .style("stroke-width",1)
+                .style("fill", maxColor)
+                .style("stroke", maxColor)
+                .style("stroke-width", 1)
         }
 
         add_tooltips();
 
-        function add_tooltips(){
+        function add_tooltips() {
 
             // Adding a tooltip which on mouseover shows the date range and the last_close points range.
-            var tooltip = d3.select("body")
+            var tooltip = d3.select(element)
                 .append('div')
-                .attr('class', 'tooltip');
+                .attr('class', 'tooltip_spot-matrix');
 
-                tooltip.append('div')
+            tooltip.append('div')
                 .attr('class', 'value');
 
-                svg.selectAll(".spots")
+            svg.selectAll(".spots")
                 .on('mouseover', function(d) {
 
                     var html = d;
                     tooltip.select('.value').html(html);
 
                     tooltip.style('display', 'block');
-                    tooltip.style('opacity',2);
+                    tooltip.style('opacity', 2);
 
                 })
                 .on('mousemove', function(d) {
                     tooltip.style('top', (d3.event.layerY + 10) + 'px')
-                    .style('left', (d3.event.layerX - 25) + 'px');
+                        .style('left', (d3.event.layerX - 25) + 'px');
                 })
                 .on('mouseout', function(d) {
                     tooltip.style('display', 'none');
-                    tooltip.style('opacity',0);
+                    tooltip.style('opacity', 0);
                 });
 
         }
@@ -249,40 +252,44 @@ function SpotMatrix(dataset,chart_options) {
         return spots;
     }
 
-    function spotAttr(d,i,j){
-        if(spotMatrixType!='size') {
-               return {cx: spotRadius,cy: spotRadius,r: spotRadius, stroke:strokeColor};
+    function spotAttr(elem, d, i, j) {
+        elem.attr("cx", spotRadius);
+        elem.attr("cy", spotRadius);
+        elem.attr("stroke", strokeColor);
+
+        if (spotMatrixType != 'size') {
+            elem.attr("r", spotRadius);
+        } else {
+            elem.attr("r", radiusScale(d));
         }
-        return {cx: spotRadius,cy: spotRadius,r: radiusScale(d), stroke:strokeColor};
     }
 
-    function spotStyle(d,i,j){
-        if(spotMatrixType == 'color'){
-            return {fill:colorScale(d)};
-        }else if(spotMatrixType == 'fill'){
+    function spotStyle(d, i, j) {
+        if (spotMatrixType == 'color') {
+            return colorScale(d)
+        } else if (spotMatrixType == 'fill') {
             var gradientScale = gradientScaleSVG
-            .append("defs")
-            .append("linearGradient")
-            .attr("id", "gradientScale-"+i+","+j)
-            .attr("x1", "0%")
-            .attr("x2", "100%")
-            .attr("y1", "0%")
-            .attr("y2", "0%");
+                .append("defs")
+                .append("linearGradient")
+                .attr("id", "gradientScale-" + i + "," + j.length)
+                .attr("x1", "0%")
+                .attr("x2", "100%")
+                .attr("y1", "0%")
+                .attr("y2", "0%");
 
-            var offset = (d/maxValue) * 100;
+            var offset = (d / maxValue) * 100;
 
             gradientScale.append("stop").attr("offset", offset + "%").style("stop-color", maxColor);
             gradientScale.append("stop").attr("offset", offset + "%").style("stop-color", minColor);
+            return "url(#gradientScale-" + i + "," + j.length + ")"
 
-            return {fill:"url(#gradientScale-" + i + "," + j + ")"};
+        } else if (spotMatrixType == 'size') {
+            return maxColor
 
-        }else if(spotMatrixType == 'size'){
-            return {fill:maxColor};
-
-        }else if(spotMatrixType == 'ring'){
-            return {fill:maxColor};
-        }else if(spotMatrixType == 'sector'){
-            return {fill:"white"};
+        } else if (spotMatrixType == 'ring') {
+            return maxColor
+        } else if (spotMatrixType == 'sector') {
+            return "white"
         }
     }
 

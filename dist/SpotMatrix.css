@@ -23,52 +23,49 @@
     OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************************/
 
-body { font: 12px Arial;}
-
-path {
-  stroke: steelblue;
-  stroke-width: 2;
-  fill: none;
+table.table_spot-matrix path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
 }
 
-.axis path,
-.axis line {
-	fill: none;
-	stroke: grey;
-	stroke-width: 1;
-	shape-rendering: crispEdges;
+table.table_spot-matrix .axis path,
+table.table_spot-matrix .axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
 }
 
-.tooltip {
-	background: #eee;
-	box-shadow: 0 0 5px #999999;
-	color: #333;
-	font-size: 12px;
-	left: 130px;
-	padding: 10px;
-	position: absolute;
-	text-align: center;
-	top: 95px;
-	z-index: 10;
-	display: block;
-	opacity: 0;
+.tooltip_spot-matrix {
+    background: #eee;
+    box-shadow: 0 0 5px #999999;
+    color: #333;
+    font-size: 12px;
+    left: 130px;
+    padding: 10px;
+    position: absolute;
+    text-align: center;
+    top: 95px;
+    z-index: 10;
+    display: block;
+    opacity: 0;
 }
 
-.table {
+table.table_spot-matrix {
     border-collapse: collapse;
     border: 1px solid black;
     border-spacing: 0px;
+    vertical-align: middle;
 }
 
-td, th, tr {
+table.table_spot-matrix td,
+table.table_spot-matrix th,
+table.table_spot-matrix tr {
     border: 1px solid black;
 }
 
-table{
-    border-collapse: collapse;
-    vertical-align:middle;
-}
-
-td{
+table.table_spot-matrix td {
     border: 1px solid black;
+    text-align: center;
 }
