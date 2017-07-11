@@ -271,7 +271,7 @@ function SpotMatrix(element, dataset, chart_options) {
             var gradientScale = gradientScaleSVG
                 .append("defs")
                 .append("linearGradient")
-                .attr("id", "gradientScale-" + i + "," + j.length)
+                .attr("id", "gradientScale-" + i + "," + d)
                 .attr("x1", "0%")
                 .attr("x2", "100%")
                 .attr("y1", "0%")
@@ -281,7 +281,7 @@ function SpotMatrix(element, dataset, chart_options) {
 
             gradientScale.append("stop").attr("offset", offset + "%").style("stop-color", maxColor);
             gradientScale.append("stop").attr("offset", offset + "%").style("stop-color", minColor);
-            return "url(#gradientScale-" + i + "," + j.length + ")"
+            return "url(#gradientScale-" + i + "," + d + ")"
 
         } else if (spotMatrixType == 'size') {
             return maxColor
